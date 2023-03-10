@@ -19,8 +19,7 @@ class TransController extends Controller
             ->join('points_history','clients.id','=','points_history.clientid')
             ->join('users','users.id','=','points_history.updated_by')
             ->select('clients.fname','clients.lname','clients.email','clients.phone_1','clients.phone_2','clients.new_points','points_history.points','users.name','points_history.created' )
-            ->where('points_history.created','>',Carbon::now()->month)
-            ->orderBy('points_history.created','desc')->paginate(15);
+            ->orderBy('points_history.id','desc')->paginate(25);
         return view('trans.index', compact('trans'));
     }
 

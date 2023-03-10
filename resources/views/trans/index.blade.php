@@ -22,7 +22,8 @@
 
             <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                 {{ $trans->links() }}
-                <table class="w-full text-sm text-center text-gray-500 dark:text-gray-400 ">
+                <input id="search_users" type="text"  class="block p-4 pl-10 text-sm text-gray-900 border border-black rounded-lg  focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search phone, name...">
+                <table class="w-full text-sm text-center text-gray-500 dark:text-gray-400 " id="table_users">
                     <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-black-700 dark:text-black-700">
                     <tr>
                         <th scope="col" class="py-3 px-6">
@@ -31,7 +32,7 @@
 
 
                         <th scope="col" class="py-3 px-6">
-                            Points Added
+                            Points
                         </th>
                         <th scope="col" class="py-3 px-6">
                             Client
@@ -73,6 +74,13 @@
 <script>
     $("li:not(#trans_menu)").removeClass("bg-gray-100 border-double border-4 border-yellow-600");
     $("#trans_menu").addClass("bg-gray-100 border-double border-4 border-yellow-600");
-
+    $(document).ready(function(){
+        $("#search_users").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_users tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
 
 </script>

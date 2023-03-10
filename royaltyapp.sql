@@ -31,14 +31,14 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `new_points` varchar(191) NOT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=96 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table laravel.clients: 29 rows
+-- Dumping data for table laravel.clients: 32 rows
 DELETE FROM `clients`;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
 INSERT INTO `clients` (`id`, `fname`, `lname`, `email`, `notes`, `phone_1`, `phone_2`, `new_points`, `updated_at`) VALUES
 	(84, 'John22', 'Doe22', NULL, NULL, '123', '123', '70', '2023-03-01 10:53:43'),
-	(83, 'John21', 'Doe21', NULL, NULL, '321234234', '2310854503', '1477', '2023-03-02 10:13:11'),
+	(83, 'John21', 'Doe21', NULL, NULL, '321234234', '2310854503', '506.6', '2023-03-08 05:09:01'),
 	(82, 'John20', 'Doe20', 'johndoe20@yahoo.com', NULL, '', '', '', '2022-11-10 21:20:37'),
 	(81, 'John19', 'Doe19', 'johndoe19@yahoo.com', NULL, '', '', '', '2022-11-09 20:09:10'),
 	(80, 'John18', 'Doe18', 'johndoe18@yahoo.com', NULL, '', '', '', '2022-11-10 21:20:37'),
@@ -66,7 +66,9 @@ INSERT INTO `clients` (`id`, `fname`, `lname`, `email`, `notes`, `phone_1`, `pho
 	(89, 'Test', 'Test', 'test@mail.com', NULL, '123456789', '25223654', '131', '2023-02-24 12:18:02'),
 	(90, 'Petros', 'Pap', NULL, '1231231231231232134444444444444444444444444444', '(999) 999-9999', '9999999', '78', '2023-03-01 10:48:28'),
 	(92, 'John', 'Snow', NULL, 'Hello Again!!', '878966548', '887899632', '1', '2023-03-01 10:52:34'),
-	(93, 'Stylianos', 'Georgiou', NULL, NULL, '99250085', NULL, '202', '2023-03-02 12:57:57');
+	(93, 'Stylianos', 'Georgiou', NULL, 'ine vlakas', '99250085', NULL, '-91.5', '2023-03-08 06:42:58'),
+	(94, 'LOUIS', 'AGATHANGELOU', NULL, 'PANIVLAKAS', '99595388', NULL, '1', '2023-03-07 07:44:44'),
+	(95, 'TEST3', 'TEST3', NULL, NULL, '666', NULL, '0', NULL);
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 
 -- Dumping structure for table laravel.failed_jobs
@@ -140,14 +142,13 @@ CREATE TABLE IF NOT EXISTS `points_history` (
   `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_by` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table laravel.points_history: ~18 rows (approximately)
+-- Dumping data for table laravel.points_history: ~24 rows (approximately)
 DELETE FROM `points_history`;
 INSERT INTO `points_history` (`id`, `clientid`, `points`, `created`, `updated_by`) VALUES
 	(4, 84, '370', '2023-02-21 14:24:18', 1),
 	(5, 83, '55', '2023-02-21 14:28:12', 1),
-	(6, 83, '205', '2023-02-21 14:28:29', 1),
 	(7, 83, '205', '2023-02-24 13:55:21', 1),
 	(8, 88, '66', '2023-02-24 14:14:48', 1),
 	(9, 89, '86', '2023-02-24 14:15:36', 1),
@@ -163,7 +164,13 @@ INSERT INTO `points_history` (`id`, `clientid`, `points`, `created`, `updated_by
 	(19, 78, '10000', '2023-03-01 13:09:34', 1),
 	(20, 83, '2427', '2023-03-01 13:34:49', 1),
 	(21, 83, '1477', '2023-03-02 12:13:11', 1),
-	(22, 93, '202', '2023-03-02 14:57:57', 2);
+	(22, 93, '202', '2023-03-02 14:57:57', 2),
+	(23, 83, '1491.3', '2023-03-06 12:01:41', 1),
+	(24, 83, '1506.6', '2023-03-06 12:08:57', 6),
+	(25, 93, '287.5', '2023-03-07 09:42:27', 2),
+	(26, 93, '-212.5', '2023-03-07 09:43:27', 2),
+	(27, 94, '1', '2023-03-07 09:44:44', 2),
+	(28, 93, '-91.5', '2023-03-08 08:42:58', 2);
 
 -- Dumping structure for table laravel.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -184,8 +191,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `admin`, `remember_token`, `created_at`, `updated_at`) VALUES
 	(1, 'Petros Papagiannis', 'peterpapagiannis@yahoo.com', NULL, '$2y$10$NnG0bS4Kruvx2ni/IrsiOezVZfZi9hjywEW4QSsUQKQ04e4LmenIK', 1, NULL, '2023-02-17 06:44:39', '2023-02-17 06:44:39'),
-	(2, 'Stylianos Dominate', 'stylianos@dominate.com.cy', NULL, '$2y$10$BoTWi1T0LQ7w0OLghwyczuAjbnHhFd/9ROnK/53Zp4my0L3/GQybC', 1, NULL, '2023-03-01 12:25:13', '2023-03-01 12:25:13'),
-	(6, 'Cashier 2', '123@mail.com', NULL, 'Etr2JR2g', 0, NULL, '2023-03-02 06:33:37', '2023-03-02 12:30:14');
+	(2, 'Stylianos Dominate', 'stylianos@dominate.com.cy', NULL, '$2y$10$BoTWi1T0LQ7w0OLghwyczuAjbnHhFd/9ROnK/53Zp4my0L3/GQybC', 1, '7Bv5qdlKwmXqlsElMMNai6eGTK5G9L5zMvdQfW2VNlcwWLdyvfCRfMwopZ39', '2023-03-01 12:25:13', '2023-03-01 12:25:13'),
+	(6, 'Cashier 2', '123@mail.com', NULL, '$2y$10$z6gI5Kg1ENhKvw5aRXa43e2.eIjO7qTh.QDWED96bsF/Sz30BO1W2', 0, NULL, '2023-03-02 06:33:37', '2023-03-06 10:08:25');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

@@ -63,7 +63,15 @@ class ClientsController extends Controller
             ->where('clientid','=',$id)
             ->orderBy('points','desc')
             ->first();
-        return view('clients.edit', compact('client','current_points'));
+
+        $points_history = DB::table('points_history')
+            ->join('clients','clients.id','=','points_history.clientid')
+            ->join('users','users.id','=','points_history.updated_by')
+            ->where('clients.id','=',$id)
+            ->orderBy('points_history.id','desc')->get();
+
+
+        return view('clients.edit', compact('client','current_points','points_history'));
     }
 
     public function search(Request $request)

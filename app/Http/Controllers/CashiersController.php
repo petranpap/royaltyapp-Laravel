@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 
 class CashiersController extends Controller
@@ -42,7 +43,7 @@ class CashiersController extends Controller
     {
         $cashier = User::find($id);
         $cashier->name = $request->input('name');
-        $cashier->password = $request->input('password');
+        $cashier->password =  Hash::make($request->input('password'));
         $cashier->update();
 
 //        $affected = DB::table('points_history')

@@ -27,7 +27,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight" style=" margin-bottom: 5px; ">
             <a class="text-blue-500 border border-blue-500 hover:bg-blue-500 hover:text-white active:bg-blue-600 font-bold  px-2 py-2 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" href="../" > < Back</a>
             Client:  {{ $client->fname }} {{ $client->lname }} ID: ({{ $client->id }})
-
+            <button class="float-right"><a class="text-green-500 border border-green-500 hover:bg-green-500 hover:text-white active:bg-green-600 font-bold  px-2 py-2 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" href="#point_history"> See points history ⬇</a></button>
         </h2>
         <div class="pull-right">
 
@@ -39,9 +39,11 @@
 
                     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
                             <div class="min-h-screen ">
+
                                 <div class="bg-white p-1 w-full">
 
-                                    <form id="update" class="w-1/2 float-left" action="{{ url('update-client/'.$client->id).'/'.Auth::user()->id }}" method="Post" enctype="multipart/form-data">
+
+                                    <form id="update" class="w-full" action="{{ url('update-client/'.$client->id).'/'.Auth::user()->id }}" method="Post" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
                                         <div class="flex items-center mb-5">
@@ -101,7 +103,7 @@
                                         <div class="flex items-center mb-5">
                                         <label for="name" class="inline-block mr-6 text-right pr-8
                                  font-bold text-gray-600">Add new points: </label>
-                                        <input type=number step=0.01  id="receipt" name="receipt" placeholder="Receipt"
+                                        <input type=number step=0.01  id="receipt" name="receipt" placeholder="Receipt"  min="0"
                                                class="flex-1 py-2 border-b-2 border-gray-400 focus:border-green-400 text-gray-600 placeholder-gray-400 outline-none"
                                                value="" >
                                             <button
@@ -138,20 +140,60 @@
                                         </div>
 
                                     </form>
-                                    @if($client->new_points>=500)
-                                        <form id="redeem" class="w-1/2 float-right" action="{{ url('redeem-client/'.$client->id)}}" method="Post" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                        <input type="submit" id="redeem_btn" class=" p-16 float-right  text-blue-500 border border-blue-500 hover:bg-blue-500 hover:text-white active:bg-blue-600 font-bold  rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" value="POINTS REDEEM -500"/>
-                                        </form>
-                                    @endif
 
+                                    @if($client->new_points>=500)
+
+                                        <div class="bg-white-100 border-t-4 border-white-500 rounded-b text-white-900 px-4 py-3 shadow-md" role="alert">
+                                            <div class="flex">
+                                                <form style=" text-align: center; font-size: 30px; " id="redeem" class="w-full float-right" action="{{ url('redeem-client/'.$client->id)}}" method="Post" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="submit" id="redeem_btn" class="  p-16 cursor-pointer  text-blue-500 border border-blue-500 hover:bg-blue-500 hover:text-white active:bg-blue-600 font-bold  rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" value="Redeem voucher -500 points"/>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
+
+
+
+
+
                             </div>
 
                     </div>
+                    <div class="bg-white p-1 w-full" id="point_history">
 
+                        <table class="w-full text-sm text-center text-gray-500 dark:text-gray-400 " id='table_users'>
+                            <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-black-700 dark:text-black-700">
+                            <tr>
+                                <th scope="col" class="py-3 px-6">
+                                    Points
+                                </th>
+                                <th scope="col" class="py-3 px-6">
+                                    Created on
+                                </th>
+                                <th scope="col" class="py-3 px-6">
+                                    Updated By Cashier
+                                </th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($points_history as $point_history)
+                                <tr class="bg-white border-b hover:bg-teal-100 hover:text-black dark:border-white-700 text-sm text-black">
+                                    <td class="py-4 px-6"> {{ $point_history->points }} </td>
+                                    <td class="py-4 px-6"> {{ $point_history->created }}</td>
+                                    <td class="py-4 px-6"> {{ $point_history->name }}</td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
                 </div>
+
                 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -161,13 +203,27 @@
                         $('#zero_btn').show();
                         $('#newpts').show();
                     });
+
+                    // Disable Negative Numbers
+                    var number = document.getElementById('receipt');
+
+                    // Listen for input event on numInput.
+                    number.onkeydown = function(e) {
+                        if(!((e.keyCode > 95 && e.keyCode < 106)
+                            || (e.keyCode > 47 && e.keyCode < 58)
+                            || e.keyCode == 8)) {
+                            Swal.fire('You can only add positive points')
+                            return false;
+                        }
+                    }
+
                     $('#zero_btn').click(function () {
                         $('#receipt').val('');
                         $('#new_points').val('');
                     })
 
                     $('#add_btn').click(function () {
-                        $('#new_points').val(Math.round($('#points').val()) + Math.round($('#receipt').val()));
+                        $('#new_points').val(parseFloat($('#points').val()) + parseFloat($('#receipt').val()));
                     })
 
                     $('#redeem_btn').click(function () {
