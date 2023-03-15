@@ -19,9 +19,24 @@ class ClientsController extends Controller
     }
 
     /**
+     * Display a listing of the resource by lifetime points.
+     */
+    public function index_lifetime()
+    {
+
+        $lifetime_points = DB::table('lifetime_points')
+            ->join('clients','clients.id','=','lifetime_points.clientid')
+            ->select('lifetime_points.points','clients.id','clients.fname','clients.lname','clients.phone_1','clients.phone_2')
+            ->orderByDesc('lifetime_points.points')
+            ->get();
+
+        return view('clients.lifetime_points', compact('lifetime_points'));
+    }
+
+    /**
      * Store a newly created resource in storage
      */
-    public function store(Request $request)
+    public function store(Request $request,$authid)
     {
 //        Create the vars
         $fname = $request->input('fname');
@@ -32,9 +47,13 @@ class ClientsController extends Controller
         $notes = $request->input('notes');
 
 //        Store in DB
-        $data=array('fname'=>$fname,"lname"=>$lname,"phone_1"=>$phone_1,"phone_2"=>$phone_2,"email"=>$email,"new_points"=>0,"notes"=>$notes);
+        $data=array('fname'=>$fname,"lname"=>$lname,"phone_1"=>$phone_1,"phone_2"=>$phone_2,"email"=>$email,"new_points"=>50,"notes"=>$notes);
         DB::table('clients')->insert($data);
-
+        $id = DB::getPdo()->lastInsertId();
+        $lifetime_points_data = array('clientid'=>$id,'points'=>50);
+        $points_history_data = array('clientid'=>$id,'points'=>50,'updated_by'=>$authid);
+        DB::table('lifetime_points')->insert($lifetime_points_data);
+        DB::table('points_history')->insert($points_history_data);
         return redirect()->route('clients')->with('status','Client '.$fname.' '.$lname.' has been created ');
     }
 
@@ -70,8 +89,12 @@ class ClientsController extends Controller
             ->where('clients.id','=',$id)
             ->orderBy('points_history.id','desc')->get();
 
+        $lifetime_points = DB::table('lifetime_points')
+            ->join('clients','clients.id','=','lifetime_points.clientid')
+            ->select('points')
+            ->where('clients.id','=',$id)->first();
 
-        return view('clients.edit', compact('client','current_points','points_history'));
+        return view('clients.edit', compact('client','current_points','points_history','lifetime_points'));
     }
 
     public function search(Request $request)
@@ -109,19 +132,31 @@ class ClientsController extends Controller
 
         $affected = DB::table('points_history')
             ->insert(['points' => $request->input('new_points'),'clientid'=>$id,'updated_by'=>$authid]);
-        return redirect('clients')->with('status', 'Data Updated');
+        $lifetime_points_now = DB::table('lifetime_points')
+            ->join('clients','clients.id','=','lifetime_points.clientid')
+            ->select('points')
+            ->where('clients.id','=',$id)->sum('points');
+
+        $new_lifetime_points = $lifetime_points_now+$request->input('receipt');
+
+        DB::table('lifetime_points')
+            ->where('clientid','=',$id)
+            ->update(['points' => $new_lifetime_points]);
+
+        return redirect('clients')->with('status', 'Data Updated '.$new_lifetime_points);
     }
 
-    public function redeem(Request $request, $id)
+    public function redeem(Request $request, $id,$authid)
     {
         $client = Clients::find($id);
-        $redeem_500 = $client->new_points - 500;
+        $redeem_500 = $client->new_points - $request->input('redeemed_points');
         $client->new_points = $redeem_500;
         $client->update();
-//
-//        $affected = DB::table('points_history')
-//            ->insert(['points' => $request->input('new_points'),'clientid'=>$id,'updated_by'=>$authid]);
-       return redirect('clients/edit/'.$id)->with('status', '500 Points Redeemed');
+        $redeemed_points = $client->new_points - $request->input('redeemed_points');
+
+        $affected = DB::table('points_history')
+            ->insert(['points' => $redeem_500,'clientid'=>$id,'updated_by'=>$authid]);
+       return redirect('clients/edit/'.$id)->with('status', $redeemed_points.' Points Redeemed');
     }
 
     /**
